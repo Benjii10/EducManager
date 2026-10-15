@@ -45,3 +45,15 @@ td {
 .error {
   color: #b00020;
 }
+
+// [Benjamin – #07] panneau des cours du cursus
+.cursus-courses {
+  margin-top: 24px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #ddd;
+
+  li {
+    margin-bottom: 6px;
+  }
+}

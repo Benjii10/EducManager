@@ -1,0 +1,63 @@
+<!-- [Benjamin – #07, 2026-10-15] Création -->
+<section class="page">
+  <h1>Promotions</h1>
+
+  <form class="form-row" (ngSubmit)="save()" aria-label="Formulaire de promotion">
+    <label for="promo-name">
+      Nom *
+      <input id="promo-name" name="name" [(ngModel)]="form.name" required maxlength="100" placeholder="CDA 2027-2028" />
+    </label>
+    <label for="promo-cursus">
+      Cursus *
+      <select id="promo-cursus" name="cursusId" [(ngModel)]="form.cursusId" required>
+        <option [ngValue]="0" disabled>Choisir un cursus</option>
+        <option *ngFor="let c of cursus" [ngValue]="c.id">{{ c.name }}</option>
+      </select>
+    </label>
+    <label for="promo-start">
+      Début *
+      <input id="promo-start" name="startDate" type="date" [(ngModel)]="form.startDate" required />
+    </label>
+    <label for="promo-end">
+      Fin *
+      <input id="promo-end" name="endDate" type="date" [(ngModel)]="form.endDate" required />
+    </label>
+    <button type="submit" class="btn btn--primary" [disabled]="datesInvalides">
+      {{ editingId === null ? 'Ajouter' : 'Enregistrer' }}
+    </button>
+    <button *ngIf="editingId !== null" type="button" class="btn" (click)="cancel()">Annuler</button>
+  </form>
+
+  <p *ngIf="datesInvalides" class="message message--error" role="alert">La date de fin doit être après la date de début.</p>
+  <p *ngIf="error" class="message message--error" role="alert">{{ error }}</p>
+  <p *ngIf="success" class="message message--success" role="status">{{ success }}</p>
+
+  <p *ngIf="loading">Chargement...</p>
+  <p *ngIf="!loading && promotions.length === 0">Aucune promotion.</p>
+
+  <table *ngIf="!loading && promotions.length > 0" class="data-table">
+    <thead>
+      <tr>
+        <th scope="col">Nom</th>
+        <th scope="col">Cursus</th>
+        <th scope="col">Début</th>
+        <th scope="col">Fin</th>
+        <th scope="col">Inscrits</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of promotions">
+        <td>{{ p.name }}</td>
+        <td>{{ p.cursusName }}</td>
+        <td>{{ p.startDate | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ p.endDate | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ p.enrolledCount }}</td>
+        <td class="actions">
+          <button type="button" class="btn" (click)="edit(p)">Modifier</button>
+          <button type="button" class="btn btn--danger" (click)="remove(p)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</section>

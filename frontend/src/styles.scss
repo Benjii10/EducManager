@@ -1,8 +1,153 @@
+// [Benjamin – #07, 2026-10-15] Styles communs des pages (formulaires, tableaux, boutons, messages)
+// pour que les nouvelles pages soient homogènes et lisibles (contrastes suffisants, focus visible).
 :root {
   --color-bg: #f0f0f0;
+  --color-text: #1f1f1f;
+  --color-text-muted: #555;
+  --color-primary: #1d4ed8;
+  --color-danger: #b00020;
+  --color-success: #1b5e20;
+  --color-border: #d0d0d0;
 }
 
 body {
   margin: 0;
   font-family: Arial, sans-serif;
+  color: var(--color-text);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.page {
+  padding: 24px 32px;
+  max-width: 1100px;
+
+  h1 {
+    margin: 0 0 16px;
+    font-size: 24px;
+  }
+
+  h2 {
+    font-size: 18px;
+    margin: 24px 0 12px;
+  }
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--color-text-muted);
+  }
+
+  label.checkbox {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  input,
+  select,
+  textarea {
+    padding: 6px 8px;
+    font-size: 14px;
+    border: 1px solid #999;
+    border-radius: 4px;
+  }
+
+  input.ng-invalid.ng-touched,
+  select.ng-invalid.ng-touched {
+    border-color: var(--color-danger);
+  }
+}
+
+.btn {
+  padding: 7px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  border: 1px solid #888;
+  border-radius: 4px;
+  background: #fff;
+
+  &--primary {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #fff;
+  }
+
+  &--danger {
+    color: var(--color-danger);
+    border-color: var(--color-danger);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+
+  th,
+  td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--color-border);
+    text-align: left;
+    font-size: 14px;
+  }
+
+  th {
+    background: #fafafa;
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+  }
+}
+
+.message {
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin: 0 0 16px;
+
+  &--error {
+    color: var(--color-danger);
+    background: #fdecee;
+  }
+
+  &--success {
+    color: var(--color-success);
+    background: #e8f5e9;
+  }
+}
+
+.muted {
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  background: #e3e8f4;
 }

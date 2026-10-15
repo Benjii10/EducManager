@@ -60,10 +60,34 @@
           </ng-container>
           <ng-template #actionButtons>
             <button type="button" (click)="startEdit(item)">Modifier</button>
+            <!-- [Benjamin – #07] gestion des cours du cursus -->
+            <button type="button" (click)="openCourses(item)">Cours</button>
             <button type="button" (click)="deleteCursus(item.id!)">Supprimer</button>
           </ng-template>
         </td>
       </tr>
     </tbody>
   </table>
+
+  <!-- [Benjamin – #07, 2026-10-15] Parcours : cours du cursus dans l'ordre -->
+  <div *ngIf="selectedCursus" class="cursus-courses">
+    <h2>Cours du cursus « {{ selectedCursus.name }} »</h2>
+    <p *ngIf="courseError" class="error" role="alert">{{ courseError }}</p>
+    <ol>
+      <li *ngFor="let cc of cursusCourses">
+        {{ cc.course.code }} — {{ cc.course.titre }} ({{ cc.course.dureeJours }} j)
+        <button type="button" (click)="removeCourse(cc)" [attr.aria-label]="'Retirer ' + cc.course.titre">Retirer</button>
+      </li>
+    </ol>
+    <p *ngIf="cursusCourses.length === 0">Aucun cours dans ce cursus.</p>
+    <label for="cursus-add-course">
+      Ajouter un cours (en dernière position)
+      <select id="cursus-add-course" name="courseToAdd" [(ngModel)]="courseToAdd">
+        <option [ngValue]="null">Choisir un cours</option>
+        <option *ngFor="let c of availableCourses" [ngValue]="c.id">{{ c.code }} — {{ c.titre }}</option>
+      </select>
+    </label>
+    <button type="button" (click)="addCourse()" [disabled]="courseToAdd === null">Ajouter</button>
+    <button type="button" (click)="closeCourses()">Fermer</button>
+  </div>
 </section>

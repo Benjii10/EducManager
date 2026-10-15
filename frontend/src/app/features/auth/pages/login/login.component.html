@@ -14,10 +14,11 @@
 
     <p *ngIf="error" class="error">{{ error }}</p>
 
-    <button type="submit">Se connecter</button>
+    <button type="submit" [disabled]="loading">{{ loading ? 'Connexion…' : 'Se connecter' }}</button>
   </form>
 
   <div class="hints">
+    <!-- [Benjamin – #01] comptes créés par le backend (config/DataInitializer.java) -->
     <p class="hints__title">Comptes de test :</p>
     <p class="hint">Admin : admin&#64;educmanager.fr / admin123</p>
     <p class="hint">Référente : referente&#64;educmanager.fr / referente123</p>

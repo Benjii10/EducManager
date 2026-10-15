@@ -15,17 +15,29 @@ export class LoginComponent {
   email = '';
   password = '';
   error = '';
+  loading = false;
 
   constructor(
     private authService: AuthService,
     private router: Router,
   ) {}
 
+  // [Benjamin – #01, 2026-10-15] login asynchrone via l'API (avant : comparaison locale synchrone)
   onSubmit(): void {
-    if (this.authService.login(this.email, this.password)) {
-      this.router.navigate([this.authService.getDefaultRoute()]);
-    } else {
-      this.error = 'Email ou mot de passe incorrect.';
-    }
+    this.error = '';
+    this.loading = true;
+    this.authService.login(this.email, this.password).subscribe({
+      next: () => {
+        this.loading = false;
+        this.router.navigate([this.authService.getDefaultRoute()]);
+      },
+      error: (err) => {
+        this.loading = false;
+        this.error =
+          err.status === 401
+            ? 'Email ou mot de passe incorrect.'
+            : 'Serveur injoignable. Vérifiez que le backend est démarré (port 8080).';
+      },
+    });
   }
 }

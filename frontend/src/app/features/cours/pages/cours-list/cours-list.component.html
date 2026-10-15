@@ -1,23 +1,58 @@
-<div class="cours-page">
+<!-- [Benjamin – #07, 2026-10-15] Réécriture : CRUD réel sur /api/courses -->
+<section class="page">
   <h1>Cours</h1>
-  <p class="wip">Page en cours — recherche avancée et création de cours à terminer.</p>
 
-  <div class="toolbar">
-    <input
-      type="text"
-      placeholder="Rechercher un cours..."
-      [(ngModel)]="searchQuery"
-    />
-    <button type="button" class="btn-disabled" disabled title="Non implémenté">
-      + Nouveau cours
-    </button>
-  </div>
+  <form *ngIf="canEdit" class="form-row" (ngSubmit)="save()" aria-label="Formulaire de cours">
+    <label for="course-code">
+      Code *
+      <input id="course-code" name="code" [(ngModel)]="form.code" required maxlength="30" />
+    </label>
+    <label for="course-titre">
+      Titre *
+      <input id="course-titre" name="titre" [(ngModel)]="form.titre" required maxlength="150" />
+    </label>
+    <label for="course-duree">
+      Durée (jours)
+      <input id="course-duree" name="dureeJours" type="number" min="1" max="200" [(ngModel)]="form.dureeJours" />
+    </label>
+    <label for="course-description">
+      Description
+      <input id="course-description" name="description" [(ngModel)]="form.description" maxlength="1000" />
+    </label>
+    <button type="submit" class="btn btn--primary">{{ editingId === null ? 'Ajouter' : 'Enregistrer' }}</button>
+    <button *ngIf="editingId !== null" type="button" class="btn" (click)="cancel()">Annuler</button>
+  </form>
+
+  <p *ngIf="error" class="message message--error" role="alert">{{ error }}</p>
+  <p *ngIf="success" class="message message--success" role="status">{{ success }}</p>
+
+  <label for="course-search" class="muted">Rechercher</label>
+  <input id="course-search" type="search" placeholder="Titre ou code..." [(ngModel)]="searchQuery" />
 
   <p *ngIf="loading">Chargement...</p>
-  <p *ngIf="error" class="error">{{ error }}</p>
-  <p *ngIf="!loading && !error && filteredCourses.length === 0">Aucun cours trouvé.</p>
+  <p *ngIf="!loading && filteredCourses.length === 0">Aucun cours trouvé.</p>
 
-  <div class="grid" *ngIf="!loading && !error && filteredCourses.length > 0">
-    <app-course-card *ngFor="let course of filteredCourses" [course]="course" />
-  </div>
-</div>
+  <table *ngIf="!loading && filteredCourses.length > 0" class="data-table">
+    <thead>
+      <tr>
+        <th scope="col">Code</th>
+        <th scope="col">Titre</th>
+        <th scope="col">Durée</th>
+        <th scope="col">Description</th>
+        <th scope="col" *ngIf="canEdit">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let course of filteredCourses">
+        <td><span class="badge">{{ course.code }}</span></td>
+        <td>{{ course.titre }}</td>
+        <td>{{ course.dureeJours ? course.dureeJours + ' j' : '—' }}</td>
+        <td class="muted">{{ course.description || '—' }}</td>
+        <td *ngIf="canEdit" class="actions">
+          <button type="button" class="btn" (click)="edit(course)">Modifier</button>
+          <button type="button" class="btn btn--danger" (click)="remove(course)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</section>

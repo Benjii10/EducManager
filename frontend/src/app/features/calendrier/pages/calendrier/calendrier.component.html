@@ -1,21 +1,29 @@
-<div class="calendrier-page">
-  <h1>Calendrier</h1>
-  <p class="wip">Version simple — vue mensuelle et filtres à venir.</p>
+<!-- [Benjamin – #07, 2026-10-15] Réécriture : planning réel -->
+<div class="calendrier-page page">
+  <h1>Mon planning</h1>
+  <p class="muted">Dates prévisionnelles calculées à partir de vos promotions (jours ouvrés, dans l'ordre du cursus).</p>
 
   <p *ngIf="loading">Chargement...</p>
+  <p *ngIf="error" class="message message--error" role="alert">{{ error }}</p>
 
-  <div *ngIf="!loading">
-    <section *ngFor="let jour of eventsParJour" class="jour">
-      <h2>{{ jour.dateLabel }}</h2>
+  <ng-container *ngIf="!loading && !error">
+    <section *ngFor="let mois of parMois" class="jour">
+      <h2>{{ mois.label }}</h2>
       <ul>
-        <li *ngFor="let event of jour.events">
-          <strong>{{ event.heureDebut }} – {{ event.heureFin }}</strong>
-          — {{ event.coursTitre }}
-          <span class="salle">({{ event.salle }})</span>
+        <li *ngFor="let item of mois.items">
+          <strong>{{ item.startDate | date: 'dd/MM' }} → {{ item.endDate | date: 'dd/MM' }}</strong>
+          — {{ item.courseTitle }} <span class="salle">({{ item.courseCode }} · {{ item.promotionName }})</span>
         </li>
       </ul>
     </section>
 
-    <p *ngIf="eventsParJour.length === 0" class="vide">Aucun cours planifié.</p>
-  </div>
+    <section *ngIf="coursAlUnite.length > 0" class="jour">
+      <h2>Cours à l'unité (dates à venir)</h2>
+      <ul>
+        <li *ngFor="let item of coursAlUnite">{{ item.courseTitle }} <span class="salle">({{ item.courseCode }})</span></li>
+      </ul>
+    </section>
+
+    <p *ngIf="items.length === 0" class="vide">Vous n'êtes inscrit(e) à aucune promotion ni aucun cours.</p>
+  </ng-container>
 </div>

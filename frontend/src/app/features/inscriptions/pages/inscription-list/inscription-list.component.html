@@ -1,0 +1,74 @@
+<!-- [Benjamin – #07, 2026-10-15] Création -->
+<section class="page">
+  <h1>Inscriptions</h1>
+
+  <form class="form-row" (ngSubmit)="enroll()" aria-label="Nouvelle inscription">
+    <label for="enr-student">
+      Élève *
+      <select id="enr-student" name="studentId" [(ngModel)]="form.studentId" required>
+        <option [ngValue]="0" disabled>Choisir un élève</option>
+        <option *ngFor="let s of students" [ngValue]="s.id">{{ s.lastName }} {{ s.firstName }}</option>
+      </select>
+    </label>
+    <label for="enr-type">
+      Type
+      <select id="enr-type" name="type" [(ngModel)]="form.type" (ngModelChange)="onTypeChange()">
+        <option value="PROMOTION">Promotion complète</option>
+        <option value="UNIT">Cours à l'unité</option>
+      </select>
+    </label>
+    <label *ngIf="form.type === 'PROMOTION'" for="enr-promo">
+      Promotion *
+      <select id="enr-promo" name="promotionId" [(ngModel)]="form.promotionId">
+        <option [ngValue]="null" disabled>Choisir une promotion</option>
+        <option *ngFor="let p of promotions" [ngValue]="p.id">{{ p.name }} ({{ p.cursusName }})</option>
+      </select>
+    </label>
+    <label *ngIf="form.type === 'UNIT'" for="enr-course">
+      Cours *
+      <select id="enr-course" name="courseId" [(ngModel)]="form.courseId">
+        <option [ngValue]="null" disabled>Choisir un cours</option>
+        <option *ngFor="let c of courses" [ngValue]="c.id">{{ c.code }} — {{ c.titre }}</option>
+      </select>
+    </label>
+    <label class="checkbox" for="enr-forced">
+      <input id="enr-forced" type="checkbox" name="forced" [(ngModel)]="form.forced" />
+      Forcer (promotion terminée)
+    </label>
+    <button type="submit" class="btn btn--primary">Inscrire</button>
+  </form>
+
+  <p *ngIf="error" class="message message--error" role="alert">{{ error }}</p>
+  <p *ngIf="success" class="message message--success" role="status">{{ success }}</p>
+
+  <label for="enr-filter" class="muted">Filtrer</label>
+  <input id="enr-filter" type="search" placeholder="Élève, promotion ou cours" [(ngModel)]="filter" />
+
+  <p *ngIf="loading">Chargement...</p>
+  <p *ngIf="!loading && filtered.length === 0">Aucune inscription.</p>
+
+  <table *ngIf="!loading && filtered.length > 0" class="data-table">
+    <thead>
+      <tr>
+        <th scope="col">Élève</th>
+        <th scope="col">Type</th>
+        <th scope="col">Promotion / cours</th>
+        <th scope="col">Date</th>
+        <th scope="col">Forcée</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let e of filtered">
+        <td>{{ e.studentName }}</td>
+        <td><span class="badge">{{ e.type === 'PROMOTION' ? 'Promotion' : 'Unité' }}</span></td>
+        <td>{{ e.promotionName ?? e.courseTitle }}</td>
+        <td>{{ e.enrollmentDate | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ e.forced ? 'Oui' : 'Non' }}</td>
+        <td class="actions">
+          <button type="button" class="btn btn--danger" (click)="remove(e)">Désinscrire</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</section>

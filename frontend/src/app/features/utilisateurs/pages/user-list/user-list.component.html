@@ -1,0 +1,61 @@
+<!-- [Benjamin – #07, 2026-10-15] Création -->
+<section class="page">
+  <h1>Utilisateurs</h1>
+
+  <form class="form-row" (ngSubmit)="save()" aria-label="Formulaire de compte" autocomplete="off">
+    <label for="user-email">
+      Email *
+      <input id="user-email" name="email" type="email" [(ngModel)]="form.email" [disabled]="editingId !== null" required />
+    </label>
+    <label for="user-firstname">
+      Prénom *
+      <input id="user-firstname" name="firstName" [(ngModel)]="form.firstName" required maxlength="60" />
+    </label>
+    <label for="user-lastname">
+      Nom *
+      <input id="user-lastname" name="lastName" [(ngModel)]="form.lastName" required maxlength="60" />
+    </label>
+    <label for="user-role">
+      Rôle *
+      <select id="user-role" name="role" [(ngModel)]="form.role">
+        <option *ngFor="let r of roles" [ngValue]="r">{{ roleLabels[r] }}</option>
+      </select>
+    </label>
+    <label for="user-password">
+      Mot de passe {{ editingId === null ? '*' : '(vide = inchangé)' }}
+      <input id="user-password" name="password" type="password" [(ngModel)]="form.password"
+             autocomplete="new-password" aria-describedby="password-help" />
+    </label>
+    <button type="submit" class="btn btn--primary">{{ editingId === null ? 'Créer' : 'Enregistrer' }}</button>
+    <button *ngIf="editingId !== null" type="button" class="btn" (click)="cancel()">Annuler</button>
+  </form>
+  <p id="password-help" class="muted">8 caractères minimum, au moins une lettre et un chiffre. Un compte « Étudiant » crée automatiquement sa fiche élève.</p>
+
+  <p *ngIf="error" class="message message--error" role="alert">{{ error }}</p>
+  <p *ngIf="success" class="message message--success" role="status">{{ success }}</p>
+
+  <p *ngIf="loading">Chargement...</p>
+
+  <table *ngIf="!loading && users.length > 0" class="data-table">
+    <thead>
+      <tr>
+        <th scope="col">Email</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Rôle</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let u of users">
+        <td>{{ u.email }}</td>
+        <td>{{ u.firstName }} {{ u.lastName }}</td>
+        <td><span class="badge">{{ roleLabels[u.role] }}</span></td>
+        <td class="actions">
+          <button type="button" class="btn" (click)="edit(u)">Modifier</button>
+          <button type="button" class="btn btn--danger" (click)="remove(u)" [disabled]="isMe(u)"
+                  [attr.title]="isMe(u) ? 'Vous ne pouvez pas supprimer votre propre compte' : null">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</section>

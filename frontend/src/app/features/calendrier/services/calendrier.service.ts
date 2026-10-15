@@ -1,14 +1,19 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { delay, Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 
-import { CalendrierEvent } from '../../../shared/models/calendrier-event.model';
-import { MOCK_CALENDRIER } from '../mocks/calendrier.mock';
+import { environment } from '../../../../environments/environment';
+import { PlanningItem } from '../../../shared/models/enrollment.model';
 
+// [Benjamin – #07, 2026-10-15] Remplacement des données fictives par le planning calculé par l'API
+// (GET /api/enrollment/me/planning).
 @Injectable({
   providedIn: 'root',
 })
 export class CalendrierService {
-  getAll(): Observable<CalendrierEvent[]> {
-    return of([...MOCK_CALENDRIER]).pipe(delay(300));
+  constructor(private http: HttpClient) {}
+
+  getPlanning(): Observable<PlanningItem[]> {
+    return this.http.get<PlanningItem[]>(environment.apiUrl + '/enrollment/me/planning');
   }
 }

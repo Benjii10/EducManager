@@ -1,0 +1,53 @@
+<!-- [Benjamin – #07, 2026-10-15] Création -->
+<section class="page">
+  <h1>Journal d'audit</h1>
+  <p class="muted">Connexions et modifications enregistrées dans MongoDB, conservées 365 jours (suppression automatique).</p>
+
+  <form class="form-row" (ngSubmit)="search()" aria-label="Filtres du journal">
+    <label for="audit-user">
+      Utilisateur
+      <input id="audit-user" name="username" [(ngModel)]="username" placeholder="email ou partie" />
+    </label>
+    <label for="audit-action">
+      Action
+      <select id="audit-action" name="action" [(ngModel)]="action">
+        <option value="">Toutes</option>
+        <option *ngFor="let a of actions" [value]="a">{{ a }}</option>
+      </select>
+    </label>
+    <button type="submit" class="btn btn--primary">Rechercher</button>
+  </form>
+
+  <p *ngIf="error" class="message message--error" role="alert">{{ error }}</p>
+  <p *ngIf="loading">Chargement...</p>
+  <p *ngIf="!loading && !error && logs.length === 0">Aucun événement.</p>
+
+  <table *ngIf="!loading && logs.length > 0" class="data-table">
+    <thead>
+      <tr>
+        <th scope="col">Date</th>
+        <th scope="col">Utilisateur</th>
+        <th scope="col">Action</th>
+        <th scope="col">Ressource</th>
+        <th scope="col">Code HTTP</th>
+        <th scope="col">IP</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let log of logs">
+        <td>{{ log.timestamp | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
+        <td>{{ log.username }}</td>
+        <td><span class="badge">{{ log.action }}</span></td>
+        <td>{{ log.httpMethod }} {{ log.path }}</td>
+        <td>{{ log.status }}</td>
+        <td class="muted">{{ log.ipAddress }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <nav *ngIf="total > size" class="actions" aria-label="Pagination" style="margin-top: 12px; display: flex; gap: 8px; align-items: center">
+    <button type="button" class="btn" (click)="search(page - 1)" [disabled]="page === 0">Précédent</button>
+    <span>Page {{ page + 1 }} / {{ lastPage + 1 }} ({{ total }} événements)</span>
+    <button type="button" class="btn" (click)="search(page + 1)" [disabled]="page >= lastPage">Suivant</button>
+  </nav>
+</section>
