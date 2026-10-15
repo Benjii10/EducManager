@@ -1,0 +1,17 @@
+ID;Type;Titre;User story;Priorite;Estimation (j);Statut;Responsable;Lot
+US01;Story;Connexion securisee (JWT, BCrypt, blocage apres 5 echecs);En tant qu'utilisateur je veux me connecter afin d'acceder aux fonctions de mon role;Haute;1;Termine;Benjamin;#01 #05
+US02;Story;Expiration de session;En tant qu'utilisateur je veux etre deconnecte a l'expiration afin de proteger mon compte;Haute;0.5;Termine;Benjamin;#01
+US03;Story;Gestion des cours;En tant que referente je veux gerer les cours afin de tenir le catalogue a jour;Haute;0.5;Termine;Benjamin (API GET/POST : Manar);#03 #07
+US04;Story;Ordre des cours d'un cursus;En tant que referente je veux ordonner les cours d'un cursus afin de definir le parcours;Moyenne;0.5;Termine;Manar (API) / Benjamin (ecran);#07
+US05;Story;Promotions;En tant que referente je veux creer une promotion datee afin d'ouvrir une session;Haute;1;Termine;Benjamin;#03 #07
+US06;Story;Inscriptions;En tant que referente je veux inscrire un eleve afin de gerer les effectifs;Haute;1;Termine;Benjamin;#03 #07
+US07;Story;Planning eleve;En tant qu'eleve je veux voir mon planning afin de savoir quand ont lieu mes cours;Moyenne;1;Termine;Benjamin;#03 #07
+US08;Story;Gestion des comptes;En tant qu'administrateur je veux creer des comptes afin de donner acces a l'application;Haute;1;Termine;Benjamin;#03 #07
+US09;Story;Journal d'audit;En tant qu'administrateur je veux consulter les connexions et modifications afin de detecter un usage anormal;Moyenne;1;Termine;Benjamin;#04 #07
+US10;Story;Consultation des cours (formateur);En tant que formateur je veux consulter les cours afin de preparer mes interventions;Basse;0.25;Termine;Benjamin;#07
+T01;Tech;Conception (CDC, maquettes, MCD/MLD, architecture);;Haute;1;Termine;Benjamin;#02
+T02;Tech;Tests automatises + plan de tests;;Haute;2;Termine;Benjamin;#06 #09
+T03;Tech;Docker, docker compose, nginx;;Haute;1;Termine;Benjamin;#08
+T04;Tech;CI/CD GitHub Actions;;Haute;0.5;Termine;Benjamin;#08
+T05;Tech;HTTPS en production (reverse proxy TLS);;Moyenne;0.5;A faire;;
+T06;Tech;Token en cookie HttpOnly + refresh token;;Basse;1;A faire;;

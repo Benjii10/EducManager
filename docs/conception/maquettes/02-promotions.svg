@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520" font-family="Arial, sans-serif" font-size="13">
+<!-- [Benjamin – #02, 2026-10-15] Wireframe (maquette fil de fer) : Promotions — référente (US05) -->
+<rect width="900" height="520" fill="#fff" stroke="#999"/>
+<text x="450" y="22" text-anchor="middle" font-size="12" fill="#888">Maquette — Promotions — référente (US05)</text>
+<rect x="10" y="35" width="180" height="470" fill="#333"/>
+<text x="22" y="62" fill="#fff" font-weight="bold" font-size="15">EducManager</text>
+<line x1="10" y1="75" x2="190" y2="75" stroke="#555"/>
+<text x="22" y="100" fill="#ddd">Tableau de bord</text>
+<text x="22" y="130" fill="#ddd">Filières</text>
+<text x="22" y="160" fill="#ddd">Cursus</text>
+<text x="22" y="190" fill="#ddd">Cours</text>
+<rect x="10" y="204" width="180" height="26" fill="#555"/>
+<text x="22" y="220" fill="#ddd">Promotions</text>
+<text x="22" y="250" fill="#ddd">Inscriptions</text>
+<text x="22" y="465" fill="#aaa" font-size="11">Sophie Leroy</text>
+<rect x="22" y="474" width="155" height="22" fill="none" stroke="#777"/><text x="99" y="489" fill="#ccc" text-anchor="middle" font-size="11">Déconnexion</text><text x="210" y="70" font-size="22" font-weight="bold">Promotions</text><rect x="210" y="85" width="670" height="70" fill="#fff" stroke="#ccc"/><text x="222" y="100" fill="#555" font-size="11">Nom *</text><rect x="222" y="105" width="150" height="26" fill="#fff" stroke="#888"/><text x="228" y="123" fill="#999">CDA 2027-2028</text><text x="384" y="100" fill="#555" font-size="11">Cursus *</text><rect x="384" y="105" width="170" height="26" fill="#fff" stroke="#888"/><text x="390" y="123" fill="#999">Choisir un cursus ▾</text><text x="566" y="100" fill="#555" font-size="11">Début *</text><rect x="566" y="105" width="110" height="26" fill="#fff" stroke="#888"/><text x="572" y="123" fill="#999">jj/mm/aaaa</text><text x="688" y="100" fill="#555" font-size="11">Fin *</text><rect x="688" y="105" width="110" height="26" fill="#fff" stroke="#888"/><text x="694" y="123" fill="#999">jj/mm/aaaa</text><rect x="808" y="105" width="64" height="26" rx="4" fill="#1d4ed8" stroke="#888"/><text x="840.0" y="122" text-anchor="middle" fill="#fff">Ajouter</text><rect x="210" y="165" width="670" height="22" fill="#fdecee"/><text x="218" y="180" fill="#b00020" font-size="12">La date de fin doit être après la date de début. (contrôle immédiat, re-vérifié par l'API)</text><rect x="210" y="200" width="670" height="26" fill="#fafafa" stroke="#ddd"/>
+<text x="216" y="217" font-weight="bold">Nom</text>
+<text x="326" y="217" font-weight="bold">Cursus</text>
+<text x="496" y="217" font-weight="bold">Début</text>
+<text x="571" y="217" font-weight="bold">Fin</text>
+<text x="646" y="217" font-weight="bold">Inscrits</text>
+<text x="701" y="217" font-weight="bold">Actions</text>
+<rect x="210" y="226" width="670" height="30" fill="#fff" stroke="#eee"/>
+<text x="216" y="246">CDA 2026-2027</text>
+<text x="326" y="246">Concepteur Développeur…</text>
+<text x="496" y="246">07/09/2026</text>
+<text x="571" y="246">30/06/2027</text>
+<text x="646" y="246">12</text>
+<rect x="699" y="229" width="70" height="26" rx="4" fill="#fff" stroke="#888"/><text x="734.0" y="246" text-anchor="middle" fill="#333">Modifier</text>
+<rect x="775" y="229" width="77" height="26" rx="4" fill="#fff" stroke="#888"/><text x="813.5" y="246" text-anchor="middle" fill="#333">Supprimer</text>
+<rect x="210" y="256" width="670" height="30" fill="#fff" stroke="#eee"/>
+<text x="216" y="276">DWWM 2025</text>
+<text x="326" y="276">Développeur Web…</text>
+<text x="496" y="276">06/01/2025</text>
+<text x="571" y="276">04/07/2025</text>
+<text x="646" y="276">0</text>
+<rect x="699" y="259" width="70" height="26" rx="4" fill="#fff" stroke="#888"/><text x="734.0" y="276" text-anchor="middle" fill="#333">Modifier</text>
+<rect x="775" y="259" width="77" height="26" rx="4" fill="#fff" stroke="#888"/><text x="813.5" y="276" text-anchor="middle" fill="#333">Supprimer</text><text x="210" y="320" fill="#888" font-size="11">Supprimer une promotion qui a des inscrits → message « Impossible de supprimer une promotion qui a des inscrits » (409)</text>
+</svg>
