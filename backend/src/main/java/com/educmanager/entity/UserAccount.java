@@ -18,10 +18,16 @@ public class UserAccount {
     @Column(nullable = false, unique = true)
     private String username;
 
+    // [Benjamin – #01] contient désormais un hash BCrypt (60 caractères), jamais le mot de passe en clair
     @Column(nullable = false)
     private String passwordHash;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    // [Benjamin – #01] nom affiché dans l'interface (sidebar, tableau de bord)
+    private String firstName;
+
+    private String lastName;
 }

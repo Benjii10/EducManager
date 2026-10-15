@@ -6,6 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
+/**
+ * Inscription d'un élève : soit à une promotion complète (type PROMOTION),
+ * soit à un cours à l'unité (type UNIT).
+ *
+ * <p>[Benjamin – #03, 2026-10-15] Remplacement des identifiants « nus » {@code promotionId} et
+ * {@code promotionCourseScheduleId} (aucune table derrière) par de vraies relations
+ * {@link Promotion} et {@link Course} avec clés étrangères. Les contraintes d'unicité
+ * empêchent d'inscrire deux fois le même élève à la même promotion / au même cours.</p>
+ */
 @Entity
 @Data
 @NoArgsConstructor
@@ -13,7 +22,7 @@ import java.time.LocalDate;
         name = "enrollment",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"student_id", "promotion_id"}),
-                @UniqueConstraint(columnNames = {"student_id", "promotion_course_schedule_id"})
+                @UniqueConstraint(columnNames = {"student_id", "course_id"})
         }
 )
 public class Enrollment {
@@ -22,6 +31,7 @@ public class Enrollment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /** Inscription acceptée par la référente malgré une règle métier (promotion déjà terminée). */
     @Column(nullable = false)
     private boolean forced;
 
@@ -36,9 +46,13 @@ public class Enrollment {
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
-    @Column(name = "promotion_id")
-    private Long promotionId;
+    /** Renseigné si type = PROMOTION. */
+    @ManyToOne
+    @JoinColumn(name = "promotion_id")
+    private Promotion promotion;
 
-    @Column(name = "promotion_course_schedule_id")
-    private Long promotionCourseScheduleId;
+    /** Renseigné si type = UNIT. */
+    @ManyToOne
+    @JoinColumn(name = "course_id")
+    private Course course;
 }

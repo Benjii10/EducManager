@@ -27,6 +27,9 @@ public interface CursusCourseRepository extends JpaRepository<CursusCourse, Long
             """)
     Optional<CursusCourse> findByIdWithDetails(@Param("id") Long id);
 
+    // [Benjamin – #03] un cours utilisé dans un cursus ne peut pas être supprimé
+    boolean existsByCourse_Id(Long courseId);
+
     boolean existsByCursus_IdAndOrdre(Long cursusId, Integer ordre);
 
     boolean existsByCursus_IdAndOrdreAndIdNot(Long cursusId, Integer ordre, Long id);

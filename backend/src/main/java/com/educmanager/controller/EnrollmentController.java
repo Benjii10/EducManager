@@ -1,103 +1,90 @@
 package com.educmanager.controller;
 
-import com.educmanager.dto.EnrollmentDTO;
-import com.educmanager.entity.Enrollment;
-import com.educmanager.entity.Student;
-import com.educmanager.repository.EnrollmentRepository;
-import com.educmanager.repository.StudentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.educmanager.dto.EnrollmentRequest;
+import com.educmanager.dto.EnrollmentResponse;
+import com.educmanager.dto.PlanningItem;
+import com.educmanager.exception.ResourceNotFoundException;
+import com.educmanager.service.EnrollmentService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
+/**
+ * API des inscriptions.
+ *
+ * <p>[Benjamin – #03, 2026-10-15] Réécriture : la logique métier est déplacée dans
+ * {@link EnrollmentService} (contrôleur « fin »), validation des données, nouvelles routes
+ * (liste, suppression, inscriptions et planning de l'élève connecté) et contrôle
+ * qu'un élève ne consulte que SES inscriptions (avant : n'importe quel élève pouvait lire
+ * celles des autres en changeant l'id dans l'URL — faille OWASP A01).</p>
+ */
 @RestController
 @RequestMapping("/api/enrollment")
-@CrossOrigin(origins = "http://localhost:4200")
 public class EnrollmentController {
 
-    @Autowired
-    private EnrollmentRepository enrollmentRepository;
+    private final EnrollmentService service;
 
-    @Autowired
-    private StudentRepository studentRepository;
+    public EnrollmentController(EnrollmentService service) {
+        this.service = service;
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('REFERENTE', 'ADMIN')")
+    public List<EnrollmentResponse> findAll() {
+        return service.findAll();
+    }
 
     @PostMapping
-    @PreAuthorize("hasRole('REFERENTE') or hasRole('ADMIN')")
-    public ResponseEntity<?> enrollStudent(@RequestBody EnrollmentDTO dto) {
-        // Vérifier si l'élève existe
-        Student student = studentRepository.findById(dto.getStudentId()).orElse(null);
-        if (student == null) {
-            return ResponseEntity.badRequest().body("Élève non trouvé");
-        }
+    @PreAuthorize("hasAnyRole('REFERENTE', 'ADMIN')")
+    public ResponseEntity<EnrollmentResponse> enrollStudent(@Valid @RequestBody EnrollmentRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.enroll(request));
+    }
 
-        // Vérifier les contraintes métier
-        if (dto.getPromotionId() != null) {
-            boolean alreadyEnrolled = enrollmentRepository.existsByStudentIdAndPromotionId(
-                    dto.getStudentId(),
-                    dto.getPromotionId()
-            );
-            if (alreadyEnrolled && !dto.isForced()) {
-                return ResponseEntity.badRequest()
-                        .body("Élève déjà inscrit à cette promotion");
-            }
-        }
-
-        if (dto.getPromotionCourseScheduleId() != null) {
-            boolean alreadyEnrolled = enrollmentRepository.existsByStudentIdAndPromotionCourseScheduleId(
-                    dto.getStudentId(),
-                    dto.getPromotionCourseScheduleId()
-            );
-            if (alreadyEnrolled && !dto.isForced()) {
-                return ResponseEntity.badRequest()
-                        .body("Élève déjà inscrit à ce cours");
-            }
-        }
-
-        // Créer l'inscription
-        Enrollment enrollment = new Enrollment();
-        enrollment.setStudent(student);
-        enrollment.setPromotionId(dto.getPromotionId());
-        enrollment.setPromotionCourseScheduleId(dto.getPromotionCourseScheduleId());
-        enrollment.setType(dto.getType());
-        enrollment.setEnrollmentDate(LocalDate.now());
-        enrollment.setForced(dto.isForced());
-
-        Enrollment saved = enrollmentRepository.save(enrollment);
-
-        EnrollmentDTO response = new EnrollmentDTO(
-                saved.getId(),
-                saved.getStudent().getId(),
-                saved.getPromotionId(),
-                saved.getPromotionCourseScheduleId(),
-                saved.getType(),
-                saved.getEnrollmentDate(),
-                saved.isForced()
-        );
-
-        return ResponseEntity.ok(response);
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('REFERENTE', 'ADMIN')")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/student/{studentId}")
-    @PreAuthorize("hasRole('STUDENT') or hasRole('REFERENTE') or hasRole('ADMIN')")
-    public ResponseEntity<List<EnrollmentDTO>> getStudentEnrollments(@PathVariable Long studentId) {
-        List<Enrollment> enrollments = enrollmentRepository.findByStudentId(studentId);
+    @PreAuthorize("hasAnyRole('STUDENT', 'REFERENTE', 'ADMIN')")
+    public List<EnrollmentResponse> getStudentEnrollments(@PathVariable Long studentId, Authentication auth) {
+        if (isStudent(auth) && !isOwnStudent(auth, studentId)) {
+            throw new AccessDeniedException("Un élève ne peut consulter que ses propres inscriptions");
+        }
+        return service.findByStudent(studentId);
+    }
 
-        List<EnrollmentDTO> dtos = enrollments.stream()
-                .map(e -> new EnrollmentDTO(
-                        e.getId(),
-                        e.getStudent().getId(),
-                        e.getPromotionId(),
-                        e.getPromotionCourseScheduleId(),
-                        e.getType(),
-                        e.getEnrollmentDate(),
-                        e.isForced()
-                ))
-                .collect(Collectors.toList());
+    /** Inscriptions de l'élève connecté. */
+    @GetMapping("/me")
+    @PreAuthorize("hasRole('STUDENT')")
+    public List<EnrollmentResponse> myEnrollments(Authentication auth) {
+        return service.findByUsername(auth.getName());
+    }
 
-        return ResponseEntity.ok(dtos);
+    /** Planning prévisionnel de l'élève connecté (page Calendrier). */
+    @GetMapping("/me/planning")
+    @PreAuthorize("hasRole('STUDENT')")
+    public List<PlanningItem> myPlanning(Authentication auth) {
+        return service.planningOf(auth.getName());
+    }
+
+    private static boolean isStudent(Authentication auth) {
+        return auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_STUDENT"));
+    }
+
+    private boolean isOwnStudent(Authentication auth, Long studentId) {
+        try {
+            return service.studentOf(auth.getName()).getId().equals(studentId);
+        } catch (ResourceNotFoundException e) {
+            return false;
+        }
     }
 }
