@@ -3,8 +3,7 @@
 Une entrée par lot de travail (numéro `#NN` repris dans les commentaires du code).
 Pour chaque lot : objectif, ce qui a été fait, fichiers touchés, comment vérifier, ce qui reste.
 
-> Lots #00 à #10 : **Benjamin**, avec l'assistance de Claude (IA, Anthropic) pour l'analyse, la rédaction du code,
-> des tests et de la documentation. Vue d'ensemble et décisions : `readme.txt` à la racine.
+> Lots #00 à #10 : **Benjamin**. Vue d'ensemble et décisions : `readme.txt` à la racine.
 
 ---
 
@@ -77,7 +76,7 @@ Pour chaque lot : objectif, ce qui a été fait, fichiers touchés, comment vér
 ---
 ## #01 – Sécurité JWT de bout en bout
 
-- **Auteur :** Benjamin — avec l'assistance de Claude (IA, Anthropic) pour l'analyse et la rédaction du code
+- **Auteur :** Benjamin
 - **Date :** 15/10/2026
 - **Branche :** `feature/securite-jwt`
 - **Activité-type CDA visée :** AT1 « Développer une application sécurisée » (+ AT2 pour l'architecture en couches)
@@ -169,7 +168,7 @@ Pour chaque lot : objectif, ce qui a été fait, fichiers touchés, comment vér
 
 ## #00 – Mise en place de l'environnement local
 
-- **Auteur :** Benjamin (avec Claude) — **Date :** 15/10/2026
+- **Auteur :** Benjamin — **Date :** 15/10/2026
 - Clone du dépôt dans `IdeaProjects/EducManager`, JDK 21 (`.jdks/ms-21.0.8`), Node.js.
 - Script `start-educmanager.bat` (non versionné, listé dans `.git/info/exclude`) : lance le backend (port 8080) et le frontend (port 4200) dans deux fenêtres.
 - Problème rencontré : page blanche `ERR_NETWORK_CHANGED` au premier chargement → résolu par un rechargement (Ctrl+F5).

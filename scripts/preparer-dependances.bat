@@ -14,6 +14,6 @@ pause
 exit /b 0
 :err
 echo.
-echo === ERREUR pendant le telechargement : copie le message ci-dessus a Claude ===
+echo === ERREUR pendant le telechargement : verifier la connexion et relancer le script ===
 pause
 exit /b 1

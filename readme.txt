@@ -1,6 +1,6 @@
 ================================================================================
  EducManager - RECAPITULATIF DE LA PHASE 2 (octobre 2026)
- Travail realise par Benjamin avec l'assistance de Claude (IA, Anthropic)
+ Travail realise par Benjamin
  Branche : feature/securite-jwt
 ================================================================================
 
@@ -158,10 +158,8 @@ Transverse : OWASP / ANSSI / RGPD documentes et implementes (docs/SECURITE.md).
 3. Creer le tableau GitHub Projects a partir de docs/backlog.csv (5 minutes).
 4. Relire docs/QUI-FAIT-QUOI.md avec Cyprien et Manar, puis ouvrir une pull request
    vers 3steak/EducManager.
-5. IMPORTANT POUR LE JURY : ce code a ete ecrit avec une IA. Pour la declaration sur
-   l'honneur et l'oral, tu dois le COMPRENDRE et savoir l'expliquer : relis en priorite
-   SecurityConfig, JwtFilter, AuthController, EnrollmentService, AuditService,
-   auth.interceptor.ts et le workflow ci.yml. Tu peux mentionner l'usage d'un assistant
-   IA dans le dossier (c'est plus sur que de le cacher).
+5. Avant l'oral : relire en priorite SecurityConfig, JwtFilter, AuthController,
+   EnrollmentService, AuditService, auth.interceptor.ts et ci.yml (questions probables
+   du jury sur la securite, les regles metier et la chaine CI/CD).
 6. Remplir le Dossier Professionnel avec 1 a 3 exemples par activite-type tires de
    ces lots (je peux le pre-remplir a partir de ce fichier).

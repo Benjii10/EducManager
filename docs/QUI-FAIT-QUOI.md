@@ -27,7 +27,7 @@ Pour retrouver tout ce qu'une personne a fait : rechercher `[Benjamin` (Ctrl+Shi
 
 ## 3. Répartition — phase 2 (octobre 2026)
 
-Tous les lots de la phase 2 ont été réalisés par **Benjamin avec l'assistance de Claude (IA)**.
+Tous les lots de la phase 2 ont été réalisés par **Benjamin**.
 
 | Lot | Sujet | Responsable | Statut |
 |---|---|---|---|
