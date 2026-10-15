@@ -1,0 +1,143 @@
+# [Benjamin - #08, 2026-10-15] Integration et deploiement continus (GitHub Actions)
+#  1. backend  : compilation + tous les tests JUnit contre un vrai PostgreSQL et un vrai MongoDB
+#  2. frontend : tests Karma/Jasmine (Chrome sans interface) + build de production
+#  3. docker   : construction des images, demarrage de la stack docker compose, test de fumee
+#  4. publish  : sur la branche main, publication des images dans GitHub Container Registry (ghcr.io)
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    name: Backend - tests (PostgreSQL + MongoDB)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: educmanager
+          POSTGRES_USER: educmanager
+          POSTGRES_PASSWORD: ci-password
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U educmanager" --health-interval 5s --health-timeout 5s --health-retries 20
+      mongo:
+        image: mongo:7
+        ports: ["27017:27017"]
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.adminCommand(\"ping\").ok'" --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:postgresql://localhost:5432/educmanager
+      DB_USER: educmanager
+      DB_PASSWORD: ci-password
+      MONGODB_URI: mongodb://localhost:27017/educmanager?serverSelectionTimeoutMS=5000
+      MONGO_IT: "true"
+      JWT_SECRET: ci-secret-for-tests-only-0123456789-abcdefghij
+      APP_SEED_ENABLED: "true"
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - name: Compilation et tests
+        run: mvn -B verify
+      - name: Resume des tests en echec
+        if: failure()
+        run: |
+          for f in target/surefire-reports/*.txt; do
+            if grep -qE "FAILURE|ERROR" "$f"; then
+              echo "::error title=$(basename "$f")::$(grep -E 'Tests run|FAILURE|ERROR|expected|Exception' "$f" | head -8 | tr '\n' ' ' | cut -c1-900)"
+            fi
+          done
+      - name: Rapports de tests
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-test-reports
+          path: backend/target/surefire-reports
+          if-no-files-found: ignore
+
+  frontend:
+    name: Frontend - tests et build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - name: Tests unitaires (Chrome sans interface)
+        run: npm run test:ci
+      - name: Build de production
+        run: npm run build
+
+  docker:
+    name: Docker - stack complete + test de fumee
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fichier .env de CI
+        run: |
+          cp .env.example .env
+          sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=ci-$RANDOM-db/" .env
+          sed -i "s/^MONGO_PASSWORD=.*/MONGO_PASSWORD=ci-$RANDOM-mongo/" .env
+          sed -i "s/^JWT_SECRET=.*/JWT_SECRET=$(openssl rand -hex 32)/" .env
+      - name: Construction et demarrage
+        run: docker compose up -d --build --wait --wait-timeout 300
+      - name: Test de fumee
+        run: bash scripts/smoke-test.sh
+      - name: Logs en cas d'echec
+        if: failure()
+        run: |
+          docker compose ps
+          docker compose logs --tail=150 backend | sed 's/^/::error::/' | tail -60
+      - name: Arret
+        if: always()
+        run: docker compose down -v
+
+  publish:
+    name: Publication des images (ghcr.io)
+    runs-on: ubuntu-latest
+    needs: docker
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Nom des images en minuscules
+        run: echo "PREFIX=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          push: true
+          tags: ${{ env.PREFIX }}/backend:latest,${{ env.PREFIX }}/backend:${{ github.sha }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          push: true
+          tags: ${{ env.PREFIX }}/frontend:latest,${{ env.PREFIX }}/frontend:${{ github.sha }}
