@@ -82,4 +82,5 @@ Les tests de l'équipe (phase 1) restent en place : filières, cursus, cours, as
 | 15/10/2026 | Backend, tests d'intégration sur **PostgreSQL 16** (profil prod) | **13 / 13 réussis** (`SecurityIntegrationTest` + chargement du contexte) |
 | 15/10/2026 | Frontend (Karma, Chrome sans interface) | **24 / 24 réussis** — couverture lignes ≈ 58 % |
 | 15/10/2026 | Build Angular de production | OK |
-| CI GitHub Actions | Backend (PostgreSQL + MongoDB), frontend, Docker + test de fumée | voir l'onglet *Actions* du dépôt et `readme.txt` |
+| 19/10/2026 | **CI GitHub Actions** : backend sur PostgreSQL 16 + MongoDB 7, frontend, images Docker + stack complète + test de fumée | **Tout vert** — 107 tests backend (dont l'écriture réelle dans MongoDB), 24 tests frontend, test de fumée réussi |
+| 19/10/2026 | Anomalie trouvée par la CI | Conteneur nginx déclaré *unhealthy* (healthcheck sur `localhost` → IPv6 non écouté) — corrigé (`127.0.0.1` + `listen [::]:80`) |

@@ -106,11 +106,15 @@ Faites le 15/10/2026 :
 - Tests manuels de l'API (curl) : droits par role (401/403), doublons (409),
   planning calcule, erreurs 400/404/405/503.
 
-En attente :
-- CI GitHub Actions sur le fork (backend avec PostgreSQL + MongoDB reels,
-  frontend, construction des images Docker, docker compose + test de fumee).
-  -> resultat a reporter ici une fois la branche poussee.
-
+- CI GitHub Actions (19/10/2026, run 39247770041 sur Benjii10/EducManager) : TOUT VERT
+  * backend : 107 tests sur PostgreSQL 16 + MongoDB 7 reels (y compris le test
+    d'ecriture du journal d'audit dans MongoDB) ;
+  * frontend : 24 tests + build de production ;
+  * docker : construction des 2 images, demarrage de la stack complete
+    (PostgreSQL, MongoDB, backend, nginx) et test de fumee reussi ;
+  * publication des images : prevue uniquement sur la branche main.
+- Correction faite grace a la CI : healthchecks Docker sur 127.0.0.1 (nginx
+  n'ecoutait pas en IPv6, le conteneur etait declare "unhealthy").
 
 --------------------------------------------------------------------------------
 5. COUVERTURE DES 11 COMPETENCES DU TITRE CDA
@@ -142,8 +146,8 @@ AT3 - Preparer le deploiement d'une application securisee
     automatises, resultats consignes)
 10. Preparer et documenter le deploiement .............. OK  (Dockerfiles, compose, .env,
     DEPLOIEMENT.md : procedure, exploitation, sauvegarde, rollback)
-11. Contribuer a la mise en production (DevOps) ........ OK* (CI/CD GitHub Actions jusqu'a la
-    publication des images) - *valide quand la CI du fork est verte (voir 4)
+11. Contribuer a la mise en production (DevOps) ........ OK  (CI/CD GitHub Actions verte :
+    tests, images Docker, deploiement de la stack, test de fumee)
 
 Transverse : OWASP / ANSSI / RGPD documentes et implementes (docs/SECURITE.md).
 
@@ -151,7 +155,7 @@ Transverse : OWASP / ANSSI / RGPD documentes et implementes (docs/SECURITE.md).
 --------------------------------------------------------------------------------
 6. CE QUI RESTE A FAIRE PAR TOI (ne peut pas etre fait a ta place)
 --------------------------------------------------------------------------------
-1. Pousser la branche sur ton fork et verifier que la CI est verte (onglet Actions).
+1. (fait) Branche poussee sur le fork, CI verte.
 2. Lancer toi-meme une fois : docker compose up -d --build (Docker Desktop) puis
    ouvrir http://localhost:8081 ; et la recette manuelle T-M01 a T-M08
    (docs/PLAN_DE_TESTS.md section 4).
