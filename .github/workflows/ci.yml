@@ -108,8 +108,11 @@ jobs:
       - name: Logs en cas d'echec
         if: failure()
         run: |
-          docker compose ps
-          docker compose logs --tail=150 backend | sed 's/^/::error::/' | tail -60
+          docker compose ps -a
+          docker compose logs --no-color
+          # resume lisible dans l'onglet Actions (une seule annotation)
+          MSG=$( { docker compose ps -a; echo '--- backend'; docker compose logs --no-color backend | grep -E "ERROR|WARN|Exception|Caused by|FAILED|Started" | tail -20; echo '--- frontend'; docker compose logs --no-color frontend | tail -15; } 2>&1 | sed -e ':a;N;$!ba' -e 's/%/%25/g;s/\r/%0D/g;s/\n/%0A/g' | cut -c1-30000)
+          echo "::error title=Diagnostic docker compose::$MSG"
       - name: Arret
         if: always()
         run: docker compose down -v

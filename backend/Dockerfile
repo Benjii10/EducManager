@@ -17,5 +17,5 @@ USER app
 EXPOSE 8080
 ENV SPRING_PROFILES_ACTIVE=prod
 HEALTHCHECK --interval=15s --timeout=5s --start-period=60s --retries=5 \
-  CMD wget -qO- http://localhost:8080/api/health | grep -q UP || exit 1
+  CMD wget -qO- http://127.0.0.1:8080/api/health | grep -q UP || exit 1
 ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75", "-jar", "/app/app.jar"]
